@@ -28,8 +28,18 @@
  *      .catch((error) => console.log(error.message)) // 'Error: Wrong parameter is passed!
  *                                                    //  Ask her again.';
  */
-function willYouMarryMe(/* isPositiveAnswer */) {
-  throw new Error('Not implemented');
+function willYouMarryMe(isPositiveAnswer) {
+  return new Promise((resolve, reject) => {
+    if (typeof isPositiveAnswer === 'boolean') {
+      if (isPositiveAnswer) {
+        resolve('Hooray!!! She said "Yes"!');
+      } else {
+        resolve('Oh no, she said "No".');
+      }
+    } else {
+      reject(new Error('Wrong parameter is passed! Ask her again.'));
+    }
+  });
 }
 
 
@@ -48,8 +58,16 @@ function willYouMarryMe(/* isPositiveAnswer */) {
  *    })
  *
  */
-function processAllPromises(/* array */) {
-  throw new Error('Not implemented');
+function processAllPromises(array) {
+  return new Promise((resolve, reject) => {
+    const resArr = [];
+    array.forEach((el) => el.then((res) => resArr.push(res)));
+    if (!resArr) {
+      reject(new Error('Empty array!'));
+    } else {
+      resolve(resArr);
+    }
+  });
 }
 
 /**
@@ -71,8 +89,18 @@ function processAllPromises(/* array */) {
  *    })
  *
  */
-function getFastestPromise(/* array */) {
-  throw new Error('Not implemented');
+function getFastestPromise(array) {
+  return new Promise((resolve, reject) => {
+    if (!array || array.length === 0) {
+      reject(new Error('Array is empty!'));
+    } else {
+      Promise.race(array)
+        .then(
+          (el) => resolve(el),
+          (err) => reject(err),
+        );
+    }
+  });
 }
 
 /**
@@ -92,8 +120,21 @@ function getFastestPromise(/* array */) {
  *    });
  *
  */
-function chainPromises(/* array, action */) {
-  throw new Error('Not implemented');
+function chainPromises(array, action) {
+  return new Promise((resolve, reject) => {
+    if (!action) {
+      reject(new Error('No action specified!'));
+    }
+
+    let promise = array[0];
+    for (let i = 1; i < array.length; i += 1) {
+      promise = promise.then(
+        (el1) => array[i].then((el2) => action(el1, el2)),
+        () => {},
+      );
+    }
+    resolve(promise);
+  });
 }
 
 module.exports = {
